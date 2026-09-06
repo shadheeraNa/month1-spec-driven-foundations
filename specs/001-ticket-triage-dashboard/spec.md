@@ -13,6 +13,7 @@
 ### Session 2026-09-06
 
 - Q: Where should a seed ticket with an unrecognised or missing priority appear on the dashboard? → A: Nowhere — priority is validated at seed load, not at render. A malformed row is rejected before it becomes a ticket, so the dashboard only ever sees P0, P1, or P2.
+- Q: Within a single priority group, what order should the tickets be listed in? → A: By ticket identifier, ascending. No date field is required on a ticket.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -175,6 +176,10 @@ dashboard and confirm the change is still there.
   recorded with the offending row identified so the seed file can be corrected.
   Because of this, every ticket the dashboard can display carries a priority of
   P0, P1, or P2. *(prd.md FR-1; constitution Principle II)*
+- **FR-013**: Within each priority group, tickets MUST be listed in ascending order
+  of ticket identifier. The order MUST be identical across reloads and MUST NOT
+  depend on when a ticket was last updated, so a ticket never changes position
+  within its group as a side effect of an unrelated edit. *(supports G-1)*
 
 #### Explicitly Out of Scope
 
@@ -252,8 +257,9 @@ if wrong; flag any that do not match intent before planning.
 - **A-006**: The seed data set is representative of a normal week — roughly 40 to
   60 tickets — so the dashboard is not designed for pagination, virtualisation, or
   search at this stage.
-- **A-007**: Within a priority group, ticket order is stable and predictable
-  across reloads so the coordinator can work down the list without items jumping.
+- **A-007**: Ticket identifiers are stable and sortable, since they are the sort
+  key within a priority group (FR-013). No creation or modification timestamp is
+  required on a ticket for this feature.
 - **A-008**: Performance targets are measured on a local development machine
   against the seed data set, as stated in prd.md section 5.
 
