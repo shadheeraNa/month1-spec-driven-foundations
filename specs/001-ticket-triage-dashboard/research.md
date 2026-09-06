@@ -212,11 +212,13 @@ is irrelevant here because the list is read-only in this feature (FR-015).
 Recorded here so they are visible at planning time rather than discovered during
 verification:
 
-1. **FR-014 is not verified in a real browser.** The closed-choice nature of the
-   priority and owner controls is asserted at component level, not by driving
-   Chrome (R1). The security-relevant half of that requirement — that the API
-   rejects the values anyway — *is* covered by contract tests, so a UI regression
-   would be a usability bug, not a data-integrity one.
+1. **FR-014 is verified at component level, not in a real browser.** A component
+   test (tasks.md T036) asserts both controls offer only their fixed values and
+   accept no typed input; what is *not* covered is real browser behaviour such as
+   native select rendering or autofill. The security-relevant half of the
+   requirement — that the API rejects the values regardless — is covered by
+   contract tests, so an escape here would be a usability bug, not a
+   data-integrity one.
 2. **Performance budgets are asserted, not measured in CI.** NFR-1 and NFR-2 are
    verified manually against a local run per the quickstart. Adding a latency gate
    to CI would risk flakiness on shared runners and eat the 3-minute budget.

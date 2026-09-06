@@ -195,8 +195,11 @@ dashboard and confirm the change is still there.
   reason for failure, so a failure is diagnosable from the logs alone. *(prd.md
   NFR-7; constitution Principle IV)*
 - **FR-011**: A change MUST NOT be considered complete until the automated check
-  pipeline — lint, type check, smoke test, and build — passes on its pull request.
-  *(prd.md FR-5; constitution Principle V)*
+  pipeline — lint, type check, smoke test, build, and commit compliance — passes
+  on its pull request. Commit compliance MUST verify that every commit introduced
+  by the pull request is signed and follows Conventional Commits format, and MUST
+  be scoped to the pull request's own commit range rather than the repository's
+  full history. *(prd.md FR-5, NFR-6; constitution Principle V)*
 - **FR-012**: Seed data MUST be validated as it is loaded. A seed row whose
   priority is not P0, P1, or P2, whose owner is not in the known owner list, or
   which is missing a required attribute, MUST be rejected at load time and MUST
@@ -223,7 +226,10 @@ dashboard and confirm the change is still there.
   already holds data, setup MUST leave every existing ticket, priority, and owner
   untouched and MUST report that seeding was skipped rather than failing silently
   or overwriting. Re-seeding from the file MUST require a separate, explicit reset
-  action that is never triggered by an ordinary setup run. *(supports G-3)*
+  action that is never triggered by an ordinary setup run. Seed file validation
+  (FR-012, FR-015) MUST run before the empty-store check, so a malformed file or
+  one declaring no owners fails setup on every run rather than passing unnoticed
+  once the store is populated. *(supports G-3)*
 
 #### Explicitly Out of Scope
 
