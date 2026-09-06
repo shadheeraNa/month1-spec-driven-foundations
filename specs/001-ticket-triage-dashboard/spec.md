@@ -14,6 +14,8 @@
 
 - Q: Where should a seed ticket with an unrecognised or missing priority appear on the dashboard? → A: Nowhere — priority is validated at seed load, not at render. A malformed row is rejected before it becomes a ticket, so the dashboard only ever sees P0, P1, or P2.
 - Q: Within a single priority group, what order should the tickets be listed in? → A: By ticket identifier, ascending. No date field is required on a ticket.
+- Q: When a priority or owner change is rejected, what should the user see? → A: The situation is prevented rather than reported. Both priority and owner are closed-choice controls, so the UI cannot submit an invalid value at all. Rejection remains reachable only through the programmatic interface.
+- Q: How is an owner supplied? → A: Selected from a fixed list of known owner names, not typed as free text. This is what makes closed-choice UI controls possible (supersedes the earlier free-text assumption).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -99,12 +101,20 @@ dashboard and confirm the change is still there.
 2. **Given** an open ticket is displayed in the P2 group, **When** the coordinator
    changes its priority to P0, **Then** the ticket appears in the P0 group, the P0
    badge count increases by one, and the P2 badge count decreases by one.
-3. **Given** an update is submitted with a priority value that is not P0, P1, or
-   P2, **When** the update is attempted, **Then** the update is rejected with an
-   error and the ticket is left unchanged.
-4. **Given** an update is submitted with an empty owner, **When** the update is
-   attempted, **Then** the update is rejected with an error and the ticket is left
-   unchanged.
+3. **Given** a request is sent directly to the update interface carrying a
+   priority value that is not P0, P1, or P2, **When** the update is attempted,
+   **Then** it is rejected with a client error and the ticket is left unchanged.
+   *(Tested against the programmatic interface — the dashboard's priority control
+   is closed-choice and cannot produce this value.)*
+4. **Given** a request is sent directly to the update interface carrying an empty
+   owner or a name outside the known owner list, **When** the update is attempted,
+   **Then** it is rejected with a client error and the ticket is left unchanged.
+   *(Tested against the programmatic interface — the dashboard's owner control is
+   closed-choice and cannot produce this value.)*
+5. **Given** the coordinator is editing a ticket in the dashboard, **When** they
+   open the priority and owner controls, **Then** each offers only valid choices —
+   P0, P1, P2 for priority and the known owner names for owner — so no invalid
+   change can be submitted from the UI.
 
 ---
 
@@ -128,6 +138,12 @@ dashboard and confirm the change is still there.
 - **Update carries fields beyond priority and owner** (for example an attempt to
   change the title or status). The unsupported fields are rejected rather than
   written, since title and status are not editable in this scope.
+- **Update names an owner outside the known owner list.** Reachable only through
+  the programmatic interface, since the dashboard's owner control is closed-choice
+  (FR-014). The request is rejected and the ticket is unchanged.
+- **A seed ticket's owner is not in the known owner list.** Caught at seed load by
+  the same membership check, so the dashboard never displays an owner the owner
+  control cannot re-select.
 - **Data store is unavailable when the dashboard loads.** The coordinator sees an
   explicit failure message, not an empty list that would read as "no open work".
 
@@ -148,14 +164,18 @@ dashboard and confirm the change is still there.
   number of open tickets in that group; an empty group's badge MUST read 0.
   *(prd.md FR-3)*
 - **FR-006**: A user MUST be able to set an open ticket's priority to P0, P1, or
-  P2, and MUST be able to assign or change its owner. *(prd.md FR-2)*
+  P2, and MUST be able to assign or change its owner by selecting from the known
+  owner list. *(prd.md FR-2)*
 - **FR-007**: An accepted priority or owner change MUST persist, and MUST be
   reflected in the grouped view and in the affected count badges without requiring
   the user to reconcile anything by hand. *(prd.md FR-2, G-3)*
 - **FR-008**: Every update MUST be validated against a defined schema before any
   stored data changes. An update carrying a priority outside {P0, P1, P2}, an
-  empty owner, an unknown ticket, or an unsupported field MUST be rejected with an
-  error and MUST leave all stored data unchanged. *(prd.md FR-2, FR-4;
+  empty owner, an owner outside the known owner list, an unknown ticket, or an
+  unsupported field MUST be rejected with an error and MUST leave all stored data
+  unchanged. This validation MUST NOT be relaxed on the grounds that the UI cannot
+  produce such a request (FR-014) — the programmatic interface is reachable
+  independently and remains the enforcement point. *(prd.md FR-2, FR-4;
   constitution Principle II)*
 - **FR-009**: The system MUST expose a programmatic read interface returning the
   tickets, and a programmatic update interface accepting a priority and owner
@@ -171,15 +191,22 @@ dashboard and confirm the change is still there.
   pipeline — lint, type check, smoke test, and build — passes on its pull request.
   *(prd.md FR-5; constitution Principle V)*
 - **FR-012**: Seed data MUST be validated as it is loaded. A seed row whose
-  priority is not P0, P1, or P2, or which is missing a required attribute, MUST be
-  rejected at load time and MUST NOT become a ticket. Each rejection MUST be
-  recorded with the offending row identified so the seed file can be corrected.
-  Because of this, every ticket the dashboard can display carries a priority of
-  P0, P1, or P2. *(prd.md FR-1; constitution Principle II)*
+  priority is not P0, P1, or P2, whose owner is not in the known owner list, or
+  which is missing a required attribute, MUST be rejected at load time and MUST
+  NOT become a ticket. Each rejection MUST be recorded with the offending row
+  identified so the seed file can be corrected. Because of this, every ticket the
+  dashboard can display carries a valid priority and a selectable owner.
+  *(prd.md FR-1; constitution Principle II)*
 - **FR-013**: Within each priority group, tickets MUST be listed in ascending order
   of ticket identifier. The order MUST be identical across reloads and MUST NOT
   depend on when a ticket was last updated, so a ticket never changes position
   within its group as a side effect of an unrelated edit. *(supports G-1)*
+- **FR-014**: The dashboard's priority and owner inputs MUST both be closed-choice
+  controls — priority offering exactly P0, P1, and P2, and owner offering exactly
+  the known owner names. The UI MUST NOT permit free-text entry for either field,
+  so an invalid change cannot be submitted from the dashboard. Rejection handling
+  (FR-008) therefore applies to the programmatic interface, which remains
+  independently reachable.
 
 #### Explicitly Out of Scope
 
@@ -202,6 +229,10 @@ feature, not deferred work:
   stable identifier, a title describing the request, a status (open or closed —
   read-only in this feature), a priority of P0, P1, or P2, and an owner naming the
   person responsible. Priority and owner are the only attributes a user may change.
+- **Known owner list**: The fixed set of person names that may be assigned as a
+  ticket's owner. It is the source of the owner control's choices and the
+  membership check applied to every update. Read-only in this feature — the
+  dashboard offers no way to add, rename, or remove an owner.
 - **Priority group**: A view-level grouping of open tickets sharing one priority
   value. Always exactly three groups (P0, P1, P2), each carrying a count of the
   open tickets it holds. Derived from tickets; not stored independently.
@@ -243,9 +274,10 @@ if wrong; flag any that do not match intent before planning.
 - **A-001**: A single trusted internal user (the PMO coordinator) uses the tool.
   With no authentication in scope (NG-1), the dashboard is not exposed to
   untrusted users, and "who made this change" is not tracked.
-- **A-002**: An owner is recorded as a free-text person name rather than being
-  chosen from a managed list of users. There is no user directory in scope, so
-  validation requires only that the owner is present and non-empty.
+- **A-002**: An owner is chosen from a fixed list of known owner names, not typed
+  as free text. This is what allows both editable fields to be closed-choice
+  controls (FR-014), so the dashboard cannot submit an invalid change. Validation
+  therefore checks membership of the known owner list, not merely non-emptiness.
 - **A-003**: Ticket status is read-only. prd.md FR-2 names only priority and owner
   as editable, and NG-3 excludes creation and deletion, so closing a ticket is not
   part of this feature.
@@ -267,6 +299,9 @@ if wrong; flag any that do not match intent before planning.
 
 - **D-001**: A seed data set of tickets, each with an identifier, title, status,
   priority, and owner, must exist before the dashboard can display anything.
+- **D-003**: A known owner list must exist before any ticket can be loaded or
+  reassigned, since it supplies the owner control's choices and the membership
+  check applied at both seed load (FR-012) and update (FR-008).
 - **D-002**: The technical stack and quality constraints are fixed by the accepted
   decision records in prd.md section 6 and by `.specify/memory/constitution.md`.
   This spec states what the feature must do; those documents govern how it is
