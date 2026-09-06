@@ -14,9 +14,9 @@
 
 - Q: Where should a seed ticket with an unrecognised or missing priority appear on the dashboard? → A: Nowhere — priority is validated at seed load, not at render. A malformed row is rejected before it becomes a ticket, so the dashboard only ever sees P0, P1, or P2.
 - Q: Within a single priority group, what order should the tickets be listed in? → A: By ticket identifier, ascending. No date field is required on a ticket.
-- Q: When a priority or owner change is rejected, what should the user see? → A: The situation is prevented rather than reported. Both priority and owner are closed-choice controls, so the UI cannot submit an invalid value at all. Rejection remains reachable only through the programmatic interface.
-- Q: How is an owner supplied? → A: Selected from a fixed list of known owner names, not typed as free text. This is what makes closed-choice UI controls possible (supersedes the earlier free-text assumption).
+- Q: When a priority or owner change is rejected, what should the user see? → A: The situation is prevented rather than reported. Both priority and owner are closed-choice controls — owner being selected from a fixed list of known names rather than typed as free text (this supersedes the earlier free-text assumption) — so the UI cannot submit an invalid value at all. Rejection remains reachable only through the programmatic interface.
 - Q: Where does the known owner list come from? → A: An explicit list in the seed file alongside the tickets, loaded and stored at setup — not derived from the owners already present on tickets, so a person who owns no ticket can still be assigned one.
+- Q: What happens when setup is re-run on a store that already holds triage decisions? → A: Seed only when the store is empty; otherwise leave existing data untouched and report that seeding was skipped. Starting over requires a separate, explicit reset.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -147,6 +147,12 @@ dashboard and confirm the change is still there.
   control cannot re-select.
 - **Data store is unavailable when the dashboard loads.** The coordinator sees an
   explicit failure message, not an empty list that would read as "no open work".
+- **Setup is re-run on a store that already holds triage decisions.** Seeding is
+  skipped, every recorded priority and owner survives untouched, and the skip is
+  reported so it is not mistaken for a successful re-seed.
+- **Seed file edited, then setup re-run on an already-seeded machine.** The edit
+  does not take effect — including a newly added owner. Only the explicit reset
+  reloads the file, and it discards recorded triage (see A-004).
 
 ## Requirements *(mandatory)*
 
@@ -213,6 +219,11 @@ dashboard and confirm the change is still there.
   present on seed tickets. It MUST be loaded before ticket rows are validated,
   since ticket owners are checked against it. A seed file declaring no owners MUST
   fail setup rather than load with an empty owner control. *(supports FR-006)*
+- **FR-016**: Seeding MUST be conditional on the store being empty. When the store
+  already holds data, setup MUST leave every existing ticket, priority, and owner
+  untouched and MUST report that seeding was skipped rather than failing silently
+  or overwriting. Re-seeding from the file MUST require a separate, explicit reset
+  action that is never triggered by an ordinary setup run. *(supports G-3)*
 
 #### Explicitly Out of Scope
 
@@ -291,9 +302,14 @@ if wrong; flag any that do not match intent before planning.
 - **A-003**: Ticket status is read-only. prd.md FR-2 names only priority and owner
   as editable, and NG-3 excludes creation and deletion, so closing a ticket is not
   part of this feature.
-- **A-004**: The seed data set is loaded once during setup. Re-running setup does
-  not silently overwrite triage decisions already recorded, since that would
-  destroy the work the tool exists to capture.
+- **A-004**: Seeding is conditional on an empty store (FR-016), so an ordinary
+  setup re-run is a no-op that preserves recorded triage. **Known consequence:**
+  because the known owner list also lives in the seed file (FR-015), editing that
+  file to add a team member has no effect on an already-seeded machine — picking
+  up the change requires the explicit reset, which discards recorded triage. This
+  is accepted for a single-user scaffold where the team list is expected to be
+  stable. If owners begin changing often, revisit FR-015/FR-016 together rather
+  than working around it.
 - **A-005**: Tickets are viewed on a desktop browser during the coordinator's
   morning review. Mobile layout is not a requirement for this version.
 - **A-006**: The seed data set is representative of a normal week — roughly 40 to

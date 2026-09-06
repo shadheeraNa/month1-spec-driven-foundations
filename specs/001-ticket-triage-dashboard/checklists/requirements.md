@@ -33,6 +33,42 @@
 
 - Items marked incomplete require spec updates before `/speckit-clarify` or `/speckit-plan`
 
+### Re-validation after clarification session 2026-09-06
+
+Re-checked all 16 items against the clarified spec. **16/16 → 16/16 passing** — no
+state changes, no regressions. The session did not fix failing items; it removed
+ambiguity behind items that were already passing, and closed one internal
+contradiction the original validation missed.
+
+**What the clarifications changed:**
+
+- *Requirements are testable and unambiguous* — materially stronger, though it was
+  already checked. Three statements that read as testable but were not now have
+  concrete assertions behind them: ticket order within a group (was "stable and
+  predictable", now ascending identifier, FR-013), rejected-update behaviour (now
+  prevented at source by closed-choice controls, FR-014), and re-seed behaviour
+  (was "does not silently overwrite", now seed-only-when-empty, FR-016).
+- *No contradictory statements* — one real contradiction was found and removed.
+  FR-004 required exactly three priority groups while an edge case required
+  malformed-priority tickets to be "surfaced". Resolved by validating priority at
+  seed load (FR-012), so the dashboard only ever sees P0/P1/P2.
+- *Scope is clearly bounded* — unchanged in scope, but the seed file grew a second
+  responsibility (the known owner list, FR-015) and a new read-only entity was
+  added. Both stay inside the PRD's Non-Goals: no user management is introduced,
+  the list is declared and read-only.
+
+**New requirements added:** FR-012 (seed-load validation), FR-013 (in-group
+ordering), FR-014 (closed-choice controls), FR-015 (declared owner list),
+FR-016 (conditional seeding).
+
+**Accepted tension carried forward — flagged for planning, not a checklist
+failure:** FR-015 puts the owner list in the seed file, and FR-016 skips seeding
+when the store is non-empty. Together these mean editing the seed file to add a
+team member has no effect on an already-seeded machine without an explicit reset
+that discards recorded triage. Recorded in A-004 and in Edge Cases. Acceptable for
+a single-user scaffold with a stable team; if owners start changing often, FR-015
+and FR-016 should be revisited as a pair rather than patched individually.
+
 ### Validation record (iteration 1 → 2)
 
 **Iteration 1 findings and resolutions:**
