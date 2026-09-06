@@ -8,6 +8,12 @@
 
 **Input**: User description: "Read prd.md in this repo and use it as the source of truth. Generate the feature spec for the lightweight ticket triage dashboard for the PMO described there."
 
+## Clarifications
+
+### Session 2026-09-06
+
+- Q: Where should a seed ticket with an unrecognised or missing priority appear on the dashboard? → A: Nowhere — priority is validated at seed load, not at render. A malformed row is rejected before it becomes a ticket, so the dashboard only ever sees P0, P1, or P2.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - See every open ticket in one place (Priority: P1)
@@ -108,9 +114,10 @@ dashboard and confirm the change is still there.
 - **Every open ticket is one priority.** The two empty groups still render with
   badges reading 0 (they are never hidden), so the absence of P0s is a visible
   fact rather than a missing section.
-- **A ticket in the seed data has an unrecognised priority or no priority.** The
-  ticket is not silently dropped from the dashboard; it is surfaced so the
-  coordinator can triage it rather than losing a possible P0.
+- **A seed row has an unrecognised priority or no priority.** It is rejected at
+  seed load and never becomes a ticket, so this never reaches the dashboard. The
+  rejection is recorded with the offending row identified, so the seed file can be
+  corrected rather than the problem being discovered as a missing ticket.
 - **Update aimed at a ticket that does not exist.** The request is rejected with a
   not-found error and nothing is written.
 - **Update aimed at a closed ticket.** Closed tickets are out of scope for triage;
@@ -162,6 +169,12 @@ dashboard and confirm the change is still there.
 - **FR-011**: A change MUST NOT be considered complete until the automated check
   pipeline — lint, type check, smoke test, and build — passes on its pull request.
   *(prd.md FR-5; constitution Principle V)*
+- **FR-012**: Seed data MUST be validated as it is loaded. A seed row whose
+  priority is not P0, P1, or P2, or which is missing a required attribute, MUST be
+  rejected at load time and MUST NOT become a ticket. Each rejection MUST be
+  recorded with the offending row identified so the seed file can be corrected.
+  Because of this, every ticket the dashboard can display carries a priority of
+  P0, P1, or P2. *(prd.md FR-1; constitution Principle II)*
 
 #### Explicitly Out of Scope
 
@@ -187,9 +200,11 @@ feature, not deferred work:
 - **Priority group**: A view-level grouping of open tickets sharing one priority
   value. Always exactly three groups (P0, P1, P2), each carrying a count of the
   open tickets it holds. Derived from tickets; not stored independently.
-- **Seed data set**: The fixed collection of tickets the system starts from. The
-  sole source of tickets in this feature — it is loaded once at setup, after which
-  triage decisions made in the dashboard are the source of truth.
+- **Seed data set**: The fixed collection of candidate tickets the system starts
+  from. The sole source of tickets in this feature — it is validated and loaded
+  once at setup, after which triage decisions made in the dashboard are the source
+  of truth. A row that fails validation is rejected at load and never becomes a
+  Ticket, so a Ticket always carries a valid priority.
 
 ## Success Criteria *(mandatory)*
 
