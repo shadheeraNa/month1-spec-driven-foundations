@@ -16,6 +16,7 @@
 - Q: Within a single priority group, what order should the tickets be listed in? → A: By ticket identifier, ascending. No date field is required on a ticket.
 - Q: When a priority or owner change is rejected, what should the user see? → A: The situation is prevented rather than reported. Both priority and owner are closed-choice controls, so the UI cannot submit an invalid value at all. Rejection remains reachable only through the programmatic interface.
 - Q: How is an owner supplied? → A: Selected from a fixed list of known owner names, not typed as free text. This is what makes closed-choice UI controls possible (supersedes the earlier free-text assumption).
+- Q: Where does the known owner list come from? → A: An explicit list in the seed file alongside the tickets, loaded and stored at setup — not derived from the owners already present on tickets, so a person who owns no ticket can still be assigned one.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -207,6 +208,11 @@ dashboard and confirm the change is still there.
   so an invalid change cannot be submitted from the dashboard. Rejection handling
   (FR-008) therefore applies to the programmatic interface, which remains
   independently reachable.
+- **FR-015**: The known owner list MUST be read from an explicit declaration in the
+  seed file and stored at setup, and MUST NOT be derived from the owner values
+  present on seed tickets. It MUST be loaded before ticket rows are validated,
+  since ticket owners are checked against it. A seed file declaring no owners MUST
+  fail setup rather than load with an empty owner control. *(supports FR-006)*
 
 #### Explicitly Out of Scope
 
@@ -230,17 +236,21 @@ feature, not deferred work:
   read-only in this feature), a priority of P0, P1, or P2, and an owner naming the
   person responsible. Priority and owner are the only attributes a user may change.
 - **Known owner list**: The fixed set of person names that may be assigned as a
-  ticket's owner. It is the source of the owner control's choices and the
-  membership check applied to every update. Read-only in this feature — the
-  dashboard offers no way to add, rename, or remove an owner.
+  ticket's owner, declared explicitly in the seed file alongside the tickets and
+  stored at setup. It is the source of the owner control's choices and the
+  membership check applied to every update. It is declared, not derived — a person
+  who currently owns no ticket still appears and can still be assigned one.
+  Read-only in this feature: the dashboard offers no way to add, rename, or remove
+  an owner, so changing the team means editing the seed file and re-running setup.
 - **Priority group**: A view-level grouping of open tickets sharing one priority
   value. Always exactly three groups (P0, P1, P2), each carrying a count of the
   open tickets it holds. Derived from tickets; not stored independently.
-- **Seed data set**: The fixed collection of candidate tickets the system starts
-  from. The sole source of tickets in this feature — it is validated and loaded
-  once at setup, after which triage decisions made in the dashboard are the source
-  of truth. A row that fails validation is rejected at load and never becomes a
-  Ticket, so a Ticket always carries a valid priority.
+- **Seed data set**: The single file the system starts from, containing both the
+  candidate tickets and the declared known owner list. The sole source of tickets
+  and owners in this feature — it is validated and loaded once at setup, after
+  which triage decisions made in the dashboard are the source of truth. A row that
+  fails validation is rejected at load and never becomes a Ticket, so a Ticket
+  always carries a valid priority and a selectable owner.
 
 ## Success Criteria *(mandatory)*
 
@@ -299,9 +309,10 @@ if wrong; flag any that do not match intent before planning.
 
 - **D-001**: A seed data set of tickets, each with an identifier, title, status,
   priority, and owner, must exist before the dashboard can display anything.
-- **D-003**: A known owner list must exist before any ticket can be loaded or
-  reassigned, since it supplies the owner control's choices and the membership
-  check applied at both seed load (FR-012) and update (FR-008).
+- **D-003**: The seed file must declare a non-empty known owner list, since it
+  supplies the owner control's choices and the membership check applied at both
+  seed load (FR-012) and update (FR-008). Ticket rows are validated against it, so
+  it must be read before any ticket row is accepted.
 - **D-002**: The technical stack and quality constraints are fixed by the accepted
   decision records in prd.md section 6 and by `.specify/memory/constitution.md`.
   This spec states what the feature must do; those documents govern how it is
