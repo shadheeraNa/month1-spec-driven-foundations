@@ -1,0 +1,362 @@
+{
+  "owners": [
+    "Oneth",
+    "Dilini",
+    "Kasun",
+    "Nadeesha",
+    "Rajitha",
+    "Tharindu"
+  ],
+  "tickets": [
+    {
+      "id": "TKT-001",
+      "title": "VPN access for new joiner",
+      "status": "open",
+      "priority": "P0",
+      "ownerName": "Dilini"
+    },
+    {
+      "id": "TKT-002",
+      "title": "Staging environment down",
+      "status": "open",
+      "priority": "P0",
+      "ownerName": "Kasun"
+    },
+    {
+      "id": "TKT-003",
+      "title": "Client demo build blocked",
+      "status": "open",
+      "priority": "P0",
+      "ownerName": "Nadeesha"
+    },
+    {
+      "id": "TKT-004",
+      "title": "Prod deploy key expired",
+      "status": "open",
+      "priority": "P0",
+      "ownerName": "Rajitha"
+    },
+    {
+      "id": "TKT-005",
+      "title": "SonarQube licence lapsed",
+      "status": "open",
+      "priority": "P0",
+      "ownerName": "Tharindu"
+    },
+    {
+      "id": "TKT-006",
+      "title": "Azure subscription over quota",
+      "status": "open",
+      "priority": "P0",
+      "ownerName": "Oneth"
+    },
+    {
+      "id": "TKT-007",
+      "title": "Jira board permissions wrong",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Dilini"
+    },
+    {
+      "id": "TKT-008",
+      "title": "Onboarding laptop not imaged",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Kasun"
+    },
+    {
+      "id": "TKT-009",
+      "title": "Sprint report numbers off",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Nadeesha"
+    },
+    {
+      "id": "TKT-010",
+      "title": "Test data refresh needed",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Rajitha"
+    },
+    {
+      "id": "TKT-011",
+      "title": "Confluence space archived early",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Tharindu"
+    },
+    {
+      "id": "TKT-012",
+      "title": "Timesheet approval stuck",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Oneth"
+    },
+    {
+      "id": "TKT-013",
+      "title": "Figma seat request",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Dilini"
+    },
+    {
+      "id": "TKT-014",
+      "title": "Shared mailbox access",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Kasun"
+    },
+    {
+      "id": "TKT-015",
+      "title": "Nightly build flaky",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Nadeesha"
+    },
+    {
+      "id": "TKT-016",
+      "title": "Docker registry cleanup",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Rajitha"
+    },
+    {
+      "id": "TKT-017",
+      "title": "Scope question on invoicing epic",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Tharindu"
+    },
+    {
+      "id": "TKT-018",
+      "title": "QA env DB seed stale",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Oneth"
+    },
+    {
+      "id": "TKT-019",
+      "title": "Certificate renewal reminder",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Dilini"
+    },
+    {
+      "id": "TKT-020",
+      "title": "Teams channel rename",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Kasun"
+    },
+    {
+      "id": "TKT-021",
+      "title": "Wiki page owner unclear",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Nadeesha"
+    },
+    {
+      "id": "TKT-022",
+      "title": "Backlog grooming slot clash",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Rajitha"
+    },
+    {
+      "id": "TKT-023",
+      "title": "Retro action item untracked",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Tharindu"
+    },
+    {
+      "id": "TKT-024",
+      "title": "Client SSO metadata update",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Oneth"
+    },
+    {
+      "id": "TKT-025",
+      "title": "Repo branch protection off",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Dilini"
+    },
+    {
+      "id": "TKT-026",
+      "title": "Storybook build warning",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Kasun"
+    },
+    {
+      "id": "TKT-027",
+      "title": "Licence audit spreadsheet",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Nadeesha"
+    },
+    {
+      "id": "TKT-028",
+      "title": "New starter Jira licence",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Rajitha"
+    },
+    {
+      "id": "TKT-029",
+      "title": "Meeting room booking conflict",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Tharindu"
+    },
+    {
+      "id": "TKT-030",
+      "title": "Access review overdue",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Oneth"
+    },
+    {
+      "id": "TKT-031",
+      "title": "Stale feature flag cleanup",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Dilini"
+    },
+    {
+      "id": "TKT-032",
+      "title": "Contractor NDA countersign",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Kasun"
+    },
+    {
+      "id": "TKT-033",
+      "title": "Design token naming drift",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Nadeesha"
+    },
+    {
+      "id": "TKT-034",
+      "title": "Release notes template",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Rajitha"
+    },
+    {
+      "id": "TKT-035",
+      "title": "Vendor invoice mismatch",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Tharindu"
+    },
+    {
+      "id": "TKT-036",
+      "title": "Support rota gap Friday",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Oneth"
+    },
+    {
+      "id": "TKT-037",
+      "title": "Password vault group missing",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Dilini"
+    },
+    {
+      "id": "TKT-038",
+      "title": "Analytics dashboard 403",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Kasun"
+    },
+    {
+      "id": "TKT-039",
+      "title": "Onboarding checklist outdated",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Nadeesha"
+    },
+    {
+      "id": "TKT-040",
+      "title": "Client contact list stale",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Rajitha"
+    },
+    {
+      "id": "TKT-041",
+      "title": "Archive closed project repos",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Tharindu"
+    },
+    {
+      "id": "TKT-042",
+      "title": "Budget code for training",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Oneth"
+    },
+    {
+      "id": "TKT-043",
+      "title": "Slack connect request",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Dilini"
+    },
+    {
+      "id": "TKT-044",
+      "title": "Laptop return not logged",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Kasun"
+    },
+    {
+      "id": "TKT-045",
+      "title": "Interview panel unassigned",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Nadeesha"
+    },
+    {
+      "id": "TKT-046",
+      "title": "Compliance training nudge",
+      "status": "open",
+      "priority": "P1",
+      "ownerName": "Rajitha"
+    },
+    {
+      "id": "TKT-047",
+      "title": "Duplicate ticket from Teams",
+      "status": "closed",
+      "priority": "P1",
+      "ownerName": "Tharindu"
+    },
+    {
+      "id": "TKT-048",
+      "title": "Old VPN request resolved",
+      "status": "closed",
+      "priority": "P0",
+      "ownerName": "Oneth"
+    },
+    {
+      "id": "TKT-049",
+      "title": "Printer access no longer needed",
+      "status": "closed",
+      "priority": "P2",
+      "ownerName": "Dilini"
+    },
+    {
+      "id": "TKT-050",
+      "title": "Resolved: sprint goal typo",
+      "status": "closed",
+      "priority": "P2",
+      "ownerName": "Kasun"
+    }
+  ]
+}

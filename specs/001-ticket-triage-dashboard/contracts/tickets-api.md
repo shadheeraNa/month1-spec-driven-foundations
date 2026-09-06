@@ -99,6 +99,7 @@ Updates a ticket's priority, owner, or both. The only write in the system.
 | `invalid_owner` | Owner empty, or not in the known owner list. |
 | `unsupported_field` | Payload carries a field other than `priority` / `ownerName` — e.g. an attempt to edit `title` or `status` (NG-3). |
 | `empty_update` | Neither `priority` nor `ownerName` supplied. |
+| `malformed_body` | Request body is not valid JSON, so no field could be read. |
 | `ticket_not_found` | Unknown `id`. |
 | `ticket_not_open` | Ticket is closed. |
 

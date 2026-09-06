@@ -28,3 +28,6 @@ coverage/
 # OS and editor junk
 .DS_Store
 Thumbs.db
+
+# Keep the template committed; real .env files stay ignored above.
+!.env.example

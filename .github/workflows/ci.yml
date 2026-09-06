@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  # T008: lint -> typecheck -> test -> build. Every step must exit 0 (FR-011, NFR-3).
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Apply migrations to a fresh database
+        # migrate deploy, not migrate dev: applies committed migrations without
+        # prompting or generating new ones (research.md R4).
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: file:./ci.db
+
+      - run: npm run lint
+
+      - run: npm run typecheck
+
+      - run: npm test
+        env:
+          DATABASE_URL: file:./ci.db
+
+      - run: npm run build
+        env:
+          DATABASE_URL: file:./ci.db
+
+  # T009: commit compliance, scoped to THIS pull request's commits (NFR-6).
+  commits:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so the base..HEAD range can be resolved.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Conventional Commits format (PR range only)
+        run: npx commitlint --from "origin/${{ github.base_ref }}" --to HEAD --verbose
+
+      - name: Signature verification (PR commits only)
+        # git verify-commit cannot work here: a CI runner has no trusted public
+        # keys in its keyring and would report every commit as unverified.
+        # GitHub verifies signatures server-side against uploaded keys, so its
+        # API is the only reliable source. See tasks.md T009.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh api --paginate \
+            "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits" \
+            --jq '.[] | select(.commit.verification.verified == false) | .sha' > unverified.txt
+          if [ -s unverified.txt ]; then
+            echo "::error::Unsigned or unverified commits in this pull request:"
+            cat unverified.txt
+            exit 1
+          fi
+          echo "All commits in this pull request are signed and verified."

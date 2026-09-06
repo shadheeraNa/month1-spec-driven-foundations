@@ -1,0 +1,38 @@
+// Ticket Triage Dashboard — data model.
+// See specs/001-ticket-triage-dashboard/data-model.md
+//
+// Note: `priority` and `status` are String, not enum. Prisma does not support
+// enums on the SQLite provider (research.md R6). The three-value constraint is
+// held by the Priority union in src/lib/priority.ts and enforced by Zod at both
+// write boundaries — the PATCH handler (FR-008) and the seed loader (FR-012).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// The known owner list (FR-015). Declared in the seed file, read-only here:
+/// there is no create, rename, or delete path in the UI or API.
+model Owner {
+  name    String   @id
+  tickets Ticket[]
+}
+
+model Ticket {
+  id     String @id
+  title  String
+  /// "open" | "closed". Read-only in this feature (A-003).
+  status String
+  /// "P0" | "P1" | "P2". Editable.
+  priority String
+  /// Editable. The foreign key makes an unknown owner unwritable at the
+  /// storage layer, not merely unlikely (research.md R7).
+  ownerName String
+  owner     Owner  @relation(fields: [ownerName], references: [name])
+
+  @@index([ownerName])
+}
