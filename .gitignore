@@ -1,6 +1,11 @@
 # Agent tooling. Spec Kit warned this may hold credentials, so keep it out of git.
 .claude/
 
+# Bookkeeping folder from the unrelated "specclaw" plugin (chan4lk/specclaw),
+# enabled globally in Claude Code. Not part of this project's GitHub Speckit
+# scaffold (.specify/, specs/) — ignored so it never gets committed by accident.
+.specclaw/
+
 # Dependencies
 node_modules/
 
