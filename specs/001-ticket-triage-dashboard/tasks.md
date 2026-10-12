@@ -138,8 +138,8 @@ Single Next.js project at repository root (ADR-001): `src/app/`, `src/components
 - [X] T043 [P] Write `README.md` with the setup sequence from quickstart.md, plus the FR-015/FR-016 consequence: editing `data/seed.json` to add an owner has no effect on an already-seeded machine without `db:reset`, which discards triage (A-004, research.md R5)
 - [X] T044 Run the full quickstart.md validation, scenarios S1 through S9, against a fresh local setup
 - [X] T045 Verify the performance budgets manually per quickstart S9: initial render under 1.5s, read and update `durationMs` p95 under 150ms (NFR-1, NFR-2)
-- [ ] T046 Confirm the CI pipeline passes end-to-end in under 3 minutes on a real pull request, with the commit-compliance job green (FR-011, NFR-3, NFR-6)
-  - **BLOCKED**: no git remote is configured, so no pull request can exist yet. The workflow is written and the same four checks pass locally in 87s (well inside the 3-minute budget), but the `commits` job — which reads the PR's commit list from the GitHub API — cannot run without a remote and an open PR. Complete this after pushing to GitHub and opening the first pull request.
+- [X] T046 Confirm the CI pipeline passes end-to-end in under 3 minutes on a real pull request, with the commit-compliance job green (FR-011, NFR-3, NFR-6)
+  - **DONE**: verified on pull request #1. Both jobs green — `verify` in 1m 33s and `commits` in 31s — running in parallel for a 1m 37s end-to-end run, well inside the 3-minute budget. Commits are signed with an SSH key registered on GitHub, so the signature check passes. Full write-up in `challenge deliverables/shadheera-nanayakkara-month1-ci-report.md`.
 
 ---
 
